@@ -25,3 +25,4 @@ A GCODE generator that generates patterns to help you level your printer bed! On
 - Add more patterns.
 - Possibly add a visualization of printer moves and a UI for entering the parameters.
 - Package into an executable for ease of use.
+- Add option to configure nozzle and bed temp for heated leveling.
