@@ -96,10 +96,8 @@ class BedLevelGenerator:
         # Write the header GCODE to configure the printer in the way we need
         write_f(self.header)
 
-        if self.pattern == "4":
-            points = self.get_4_corners()
-        elif self.pattern == "z":
-            points = self.get_z_corners()
+        if self.pattern == "4" or self.pattern == "z":
+            points = self.get_corners()
         elif self.pattern == "#":
             points = self.get_grid_points(3, 3)
         else:
@@ -128,7 +126,7 @@ class BedLevelGenerator:
         # Close the gcode file
         self.gcode_file.close()
         
-    def get_4_corners(self):
+    def get_corners(self):
         """Generates the GCODE for a 4 corners pattern
 
         Returns:
@@ -138,43 +136,25 @@ class BedLevelGenerator:
         # Generate a loop to each corner for all times entered
         for _ in range(self.num_times):
             for corner in range(4):
-                # Front left corner
-                if corner == 0:
-                    corners.append("G0 X15 Y15 F{} ; Move to front left corner\n".format(self.travel_speed))
-                # Back left corner
-                elif corner == 1:
-                    corners.append("G0 X15 Y{} F{} ; Move to back left corner\n".format(self.max_y - 15, self.travel_speed))
-                # Back right corner
-                elif corner == 2:
-                    corners.append("G0 X{} Y{} F{} ; Move to front right corner\n".format(self.max_x - 15, self.max_y - 15, self.travel_speed))
-                # Front right corner
-                elif corner == 3:
-                    corners.append("G0 X{} Y15 F{} ; Move to back right corner\n".format(self.max_x - 15, self.travel_speed))
-        return corners
-    
-    def get_z_corners(self):
-        """Generates the GCODE for a Z pattern
 
-        Returns:
-            List: A list of conrners (varies in length depending on number of times to loop)
-        """
-        corners = []
-        # Generate a loop to each corner for all times entered
-        for _ in range(self.num_times):
-            for corner in range(4):
-                # Front left corner
                 if corner == 0:
                     corners.append("G0 X15 Y15 F{} ; Move to front left corner\n".format(self.travel_speed))
-                # Back left corner
+
                 elif corner == 1:
                     corners.append("G0 X15 Y{} F{} ; Move to back left corner\n".format(self.max_y - 15, self.travel_speed))
-                # Front right corner
+
                 elif corner == 2:
-                    corners.append("G0 X{} Y15 F{} ; Move to back right corner\n".format(self.max_x - 15, self.travel_speed))
-                # Back right corner
+                    if self.pattern == "4":
+                        corners.append("G0 X{} Y15 F{} ; Move to back right corner\n".format(self.max_x - 15, self.travel_speed))
+                    elif self.pattern == "z":
+                        corners.append("G0 X{} Y{} F{} ; Move to front right corner\n".format(self.max_x - 15, self.max_y - 15, self.travel_speed))
+
                 elif corner == 3:
-                    corners.append("G0 X{} Y{} F{} ; Move to front right corner\n".format(self.max_x - 15, self.max_y - 15, self.travel_speed))
-                    
+                    if self.pattern == "4":
+                        corners.append("G0 X{} Y{} F{} ; Move to front right corner\n".format(self.max_x - 15, self.max_y - 15, self.travel_speed))
+                    elif self.pattern == "z":
+                        corners.append("G0 X{} Y15 F{} ; Move to back right corner\n".format(self.max_x - 15, self.travel_speed))
+                        
         return corners
     
     def get_grid_points(self, num_rows, num_cols):
