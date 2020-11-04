@@ -54,9 +54,19 @@ class BedLevelGenerator:
         except ValueError:
             print("Value for safe Z was not a number, using default of 10mm\n")
             self.safe_z = 10
+        
+        edge_distance = input("Please enter a safe distance in mm (def: 20mm) from the edge of your print bed: ")
+        try:
+            self.edge_distance = int(edge_distance)
+            if self.edge_distance < 10:
+                print("Edge distance was lower than 10mm, changing to 10mm to be safe!\n")
+                self.edge_distance = 10
+        except ValueError:
+            print("Edge distance was not a number, Using default of 20mm\n")
+            self.edge_distance = 20
 
         # Get the desired travel speed or 1500mm/min if the user inputs something wrong
-        travel_speed = input("\nPlease enter a number for travel speed (def: 1500) in mm/min or leave blank: ")
+        travel_speed = input("Please enter a number for travel speed (def: 1500) in mm/min or leave blank: ")
         try:
             self.travel_speed = int(travel_speed)
             if self.travel_speed > 5000:
@@ -138,27 +148,27 @@ class BedLevelGenerator:
             for corner in range(4):
 
                 if corner == 0:
-                    corners.append("G0 X15 Y15 F{} ; Move to front left corner\n".format(self.travel_speed))
+                    corners.append("G0 X{} Y{} F{} ; Move to front left corner\n".format(self.edge_distance, self.edge_distance, self.travel_speed))
 
                 elif corner == 1:
-                    corners.append("G0 X15 Y{} F{} ; Move to back left corner\n".format(self.max_y - 15, self.travel_speed))
+                    corners.append("G0 X{} Y{} F{} ; Move to back left corner\n".format(self.edge_distance, self.max_y - self.edge_distance, self.travel_speed))
 
                 elif corner == 2:
                     if self.pattern == "4":
-                        corners.append("G0 X{} Y15 F{} ; Move to back right corner\n".format(self.max_x - 15, self.travel_speed))
+                        corners.append("G0 X{} Y{} F{} ; Move to back right corner\n".format(self.max_x - self.edge_distance, self.edge_distance, self.travel_speed))
                     elif self.pattern == "z":
-                        corners.append("G0 X{} Y{} F{} ; Move to front right corner\n".format(self.max_x - 15, self.max_y - 15, self.travel_speed))
+                        corners.append("G0 X{} Y{} F{} ; Move to front right corner\n".format(self.max_x - self.edge_distance, self.max_y - self.edge_distance, self.travel_speed))
 
                 elif corner == 3:
                     if self.pattern == "4":
-                        corners.append("G0 X{} Y{} F{} ; Move to front right corner\n".format(self.max_x - 15, self.max_y - 15, self.travel_speed))
+                        corners.append("G0 X{} Y{} F{} ; Move to front right corner\n".format(self.max_x - self.edge_distance, self.max_y - self.edge_distance, self.travel_speed))
                     elif self.pattern == "z":
-                        corners.append("G0 X{} Y15 F{} ; Move to back right corner\n".format(self.max_x - 15, self.travel_speed))
+                        corners.append("G0 X{} Y{} F{} ; Move to back right corner\n".format(self.max_x - self.edge_distance, self.edge_distance, self.travel_speed))
                         
         return corners
     
     def get_grid_points(self, num_rows, num_cols):
-        """Generates an arbitrary point grid 15mm from the edge of the bed
+        """Generates an arbitrary point grid at the configured safe distance from the edge of the bed
 
         Args:
             num_rows (int): Number of rows (x)
@@ -169,8 +179,8 @@ class BedLevelGenerator:
         """
         points = []
         for _ in range(self.num_times):
-            cols = list(np.linspace(15, self.max_x - 15, num_cols))
-            rows = list(np.linspace(15, self.max_y - 15, num_rows))
+            cols = list(np.linspace(self.edge_distance, self.max_x - self.edge_distance, num_cols))
+            rows = list(np.linspace(self.edge_distance, self.max_y - self.edge_distance, num_rows))
 
             positions = [(x, y) for x in cols for y in rows]
             for pos in positions:

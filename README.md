@@ -13,11 +13,11 @@ A GCODE generator that generates patterns to help you level your printer bed! On
 ## Patterns
 
 - **Four corners - `4`**
-  - Generates a point in each corner that is 15mm from the edge of the bed and moves in a "square" fashion (FL, BL, BR, FL)
+  - Generates a point in each corner that at the configured safe distance from the edge of the bed and moves in a "square" fashion (FL, BL, BR, FL)
 - **Z pattern - `z`**
-  - Generates a point in each corner 15mm from the edge, except it travels in a Z formation (FL, BL, FR, BR)
+  - Generates a point in each corner at the configured safe distance from the edge, except it travels in a Z formation (FL, BL, FR, BR)
 - **Tic Tac Toe - `#`**
-  - Generates a 9 point grid across your bed 15mm from the edge and travels in columns (Bottom to Top)
+  - Generates a 9 point grid across your bed at the configured safe distance from the edge and travels in columns (Bottom to Top)
 - **Suggest more in an issue on this repository!**
 
 ## Plans
