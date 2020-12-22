@@ -186,7 +186,6 @@ class BedLevelGenerator:
             for pos in positions:
                 points.append("G0 X{} Y{} F{} ; Move to point in grid.\n".format(int(pos[0]), int(pos[1]), self.travel_speed))
 
-        print(points)
         return points
 
 
